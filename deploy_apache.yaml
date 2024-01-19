@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Set timezone to Africa/Lagos
+      timezone:
+        name: Africa/Lagos
+
+    - name: Update package manager cache
+      yum:
+        update_cache: yes
+      when: ansible_pkg_mgr == 'yum'  
+
+    - name: Install Apache
+      package:
+        name: apache2
+        state: present
+
+    - name: Create HTML page
+      template:
+        src: index.html.j2  
+        dest: /var/www/html/index.html
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
